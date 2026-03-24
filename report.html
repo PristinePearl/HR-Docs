@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Pristine - HR Docs</title>
+
+    <link rel="icon" href="https://www.pristinepearlpharma.in/images/alt-logo.png" type="image/png" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+        /* ---------- Theme ---------- */
+        :root{
+            --primary:#5eead4;
+            --primary-dark:#2dd4bf;
+            --bg:#111827;
+            --surface:#1f2937;
+            --border:#374151;
+            --text:#f3f4f6;
+            --muted:#9ca3af;
+            --success:#4ade80;
+            --error:#f87171;
+            --card-shadow: 0 8px 30px rgba(0,0,0,0.6);
+            --modal-bg: rgba(0, 0, 0, 0.95);
+            --transition-speed: 0.2s;
+        }
+        
+        html { scroll-behavior: smooth; }
+        
+        *{box-sizing:border-box;margin:0;padding:0}
+        
+        /* Security: Prevent text selection on UI elements */
+       body{
+    font-family:Inter,system-ui,Segoe UI,Arial;
+    background:var(--bg);
+    color:var(--text);
+    height:100vh;
+    overflow:hidden;   /* 🔥 prevents full page scroll */
+    user-select: none;
+    -webkit-user-select: none;
+}
+        /* Allow selection only on inputs and specific data */
+        input, select, .selectable-text { user-select: text; -webkit-user-select: text; }
+
+        .app-container{
+    display:flex;
+    height:100vh;   /* full screen fixed */
+}
+
+        /* Sidebar */
+        .sidebar{
+            width:320px;
+            background:var(--surface);
+            border-right:1px solid var(--border);
+            display:flex;
+            flex-direction:column;
+            height:100vh;
+            overflow:hidden;
+            transition:all var(--transition-speed);
+            box-shadow:0 4px 12px rgba(0,0,0,0.3);
+        }
+        .logo-section{
+            padding:20px;border-bottom:1px solid var(--border);display:flex;
+            gap:12px;align-items:center;background:linear-gradient(135deg,rgba(94,234,212,0.05),transparent);
+            transition:all var(--transition-speed);
+        }
+        .logo-section:hover{ background:linear-gradient(135deg,rgba(94,234,212,0.1),transparent); }
+        
+        .logo{
+            width:48px;height:48px;
+            background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+            display:flex;align-items:center;justify-content:center;border-radius:10px;
+            color:#111827;font-weight:700;transition:all var(--transition-speed);
+            box-shadow:0 4px 12px rgba(94,234,212,0.2);
+        }
+        .logo:hover{ transform:scale(1.05);box-shadow:0 6px 16px rgba(94,234,212,0.3); }
+        
+        .filter-section{
+            padding:22px;flex:1;display:flex;flex-direction:column;gap:18px;
+            transition:all var(--transition-speed);
+        }
+        .section-title{
+            display:flex;gap:10px;align-items:center;color:var(--primary);
+            transition:all var(--transition-speed);
+        }
+        .filter-label{
+            font-size:0.85rem;color:var(--muted);display:flex;gap:8px;
+            align-items:center;margin-bottom:6px;transition:color var(--transition-speed);
+        }
+        .filter-input{
+            width:100%;padding:10px 12px;border-radius:8px;background:#0f1724;
+            border:1px solid var(--border);color:var(--text);
+            transition:all var(--transition-speed);
+        }
+        .filter-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(94,234,212,0.1)}
+        .filter-input:hover{border-color:var(--primary)}
+        
+        .btn{
+            padding:12px 14px;border-radius:10px;border:none;cursor:pointer;
+            background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+            color:#111827;font-weight:700;transition:all var(--transition-speed) ease;
+            position:relative;overflow:hidden;
+        }
+        .btn::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,0.1);opacity:0;transition:opacity var(--transition-speed)}
+        .btn:hover::before{opacity:1}
+        .btn:active{transform:scale(0.98)}
+        .btn:hover{opacity:0.9;transform:translateY(-2px);box-shadow:0 4px 12px rgba(94,234,212,0.25)}
+        .btn:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+        .btn:disabled{opacity:0.5;cursor:not-allowed;filter:grayscale(1);transform:none}
+        
+        .btn-outline{
+            background:transparent;border:1px solid var(--primary);color:var(--primary);
+            transition:all var(--transition-speed) ease;
+        }
+        .btn-outline:hover{background:var(--primary);color:#111827;box-shadow:0 4px 12px rgba(94,234,212,0.25)}
+        
+        .btn-secondary{
+            background:linear-gradient(135deg,var(--muted),#475569);color:var(--text);margin-top:6px;
+            transition:all var(--transition-speed) ease;
+        }
+        .btn-secondary:hover{opacity:0.9;transform:translateY(-2px)}
+        
+        .btn-danger-outline{
+            background:transparent;border:1px solid var(--error);color:var(--error);padding:8px;
+            transition:all var(--transition-speed) ease;
+        }
+        .btn-danger-outline:hover{background:rgba(248,113,113,0.1);border-color:var(--error)}
+
+        .stats-card{
+            background:#0f1724;border:1px solid var(--border);padding:12px;border-radius:8px;
+            transition:all var(--transition-speed) ease;
+        }
+        .stats-card:hover{border-color:var(--primary);box-shadow:0 2px 8px rgba(94,234,212,0.1)}
+        .stats-title{color:var(--muted);font-size:0.8rem}
+        .stats-value{color:var(--primary);font-size:1.6rem;font-weight:700;transition:color var(--transition-speed)}
+
+        /* Main Content */
+        .main-content{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    height:100vh;
+    overflow:hidden;   /* prevent double scroll */
+    position:relative;
+}
+        .header{
+            background:var(--surface);
+            border-bottom:1px solid var(--border);
+            position:relative;
+            z-index:500;
+            box-shadow:0 2px 8px rgba(0,0,0,0.2);
+            transition:all var(--transition-speed);
+        }
+        .header-content{
+            padding:18px 28px;display:flex;justify-content:space-between;
+            align-items:center;gap:20px;
+        }
+        .page-title{font-size:1.25rem;font-weight:600;color:var(--text);transition:color var(--transition-speed)}
+.results-section{
+    padding:0 22px 22px 22px;
+    background:var(--bg);
+    flex:1;
+    overflow-y:auto;
+    transition:all var(--transition-speed);
+}
+.results-section::-webkit-scrollbar{
+    width:8px;
+}
+.results-section::-webkit-scrollbar-track{
+    background:transparent;
+}
+.results-section::-webkit-scrollbar-thumb{
+    background:var(--border);
+    border-radius:4px;
+    transition:background var(--transition-speed);
+}
+.results-section::-webkit-scrollbar-thumb:hover{
+    background:var(--primary);
+}
+        
+        /* Table */
+        .table-container{
+            background:var(--surface);
+            border:1px solid var(--border);
+            border-radius:8px;
+            overflow:visible;
+            box-shadow:0 2px 8px rgba(0,0,0,0.1);
+            transition:all var(--transition-speed);
+        }
+        .table-container:hover{ box-shadow:0 4px 16px rgba(94,234,212,0.1); }
+        
+        table{
+            width:100%;
+            border-collapse:separate;
+            border-spacing:0;
+        }
+        
+        thead th{
+            position: sticky;
+            top: 0;
+            z-index: 300;
+            background: linear-gradient(135deg,rgba(94,234,212,0.08),rgba(45,212,191,0.04));
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            color: var(--muted);
+            padding:20px 20px;
+            text-align:left;
+            font-size:0.85rem;
+            font-weight:700;
+            text-transform:uppercase;
+            border-bottom:1px solid var(--border);
+            cursor:pointer;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.6), 0 2px 0 var(--border);
+            transition:all var(--transition-speed);
+            user-select:none;
+        }
+        th:hover { 
+            color: var(--primary); 
+            background: linear-gradient(135deg,rgba(94,234,212,0.15),rgba(45,212,191,0.1));
+        }
+        th:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+        
+        td{
+            padding:12px 20px;border-bottom:1px solid var(--border);
+            vertical-align:middle;font-size:0.95rem;transition:background-color var(--transition-speed);
+        }
+        
+        tbody tr{
+            transition:all var(--transition-speed);
+        }
+        tbody tr:hover td{
+            background:rgba(94,234,212,0.05);
+        }
+        tbody tr:hover{
+            box-shadow:inset 0 0 0 1px rgba(94,234,212,0.1);
+        }
+        
+        /* Sort Icons */
+        .sort-icon { margin-left: 6px; font-size: 0.75em; opacity: 0.5; transition:opacity var(--transition-speed); }
+        .sort-active { opacity: 1; color: var(--primary); }
+
+        .view-btn{
+            padding: 6px 12px; font-size: 0.85rem; background: #0f1724;
+            border: 1px solid var(--primary); color: var(--primary); border-radius: 6px;
+            cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+            transition: all 0.2s ease;
+        }
+        .view-btn:hover{ background: var(--primary); color: #111827; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(94,234,212,0.2); }
+        .view-btn:active{ transform: translateY(0); }
+
+        /* Modal Styles */
+        .modal-overlay{
+            position: fixed; inset: 0; background: var(--modal-bg); z-index: 1000;
+            display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px);
+            animation: fadeIn var(--transition-speed) ease-out;
+        }
+        @keyframes fadeIn { from{opacity:0;backdrop-filter:blur(0)} to{opacity:1;backdrop-filter:blur(4px)} }
+        
+        .modal-content{
+            background: var(--surface); width: 90%; max-width: 700px;
+            border-radius: 12px; border: 1px solid var(--border); box-shadow: var(--card-shadow);
+            display: flex; flex-direction: column; max-height: 90vh; animation: modalSlideUp 0.3s ease-out;
+            transition: all 0.3s ease;
+        }
+        @keyframes modalSlideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+        
+        /* Expanded Modal for Preview */
+        .modal-content.expanded {
+            max-width: 95vw;
+            height: 95vh;
+        }
+
+        .modal-header{ 
+            padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; 
+            align-items: center; background: linear-gradient(135deg,rgba(94,234,212,0.05),transparent);
+        }
+        .modal-title{ font-size: 1.25rem; font-weight: 600; color: var(--primary); display:flex; align-items:center; gap:8px; }
+        .close-btn{ 
+            background: none; border: none; color: var(--muted); font-size: 1.5rem; cursor: pointer; 
+            transition: color var(--transition-speed), transform var(--transition-speed); border-radius: 4px; padding:4px;
+        }
+        .close-btn:hover{ color: var(--text); transform:rotate(90deg); }
+        .close-btn:focus-visible{ outline: 2px solid var(--primary); }
+
+        .modal-body{ 
+            padding: 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column;
+            animation: fadeIn 0.3s ease-out 0.1s both;
+        }
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+        
+        .detail-grid{ display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .detail-item{ display: flex; flex-direction: column; gap: 4px; transition:all var(--transition-speed) }
+        .detail-item:hover{ transform:translateX(4px) }
+        .detail-label{ font-size: 0.8rem; color: var(--muted); text-transform: uppercase; font-weight: 700; }
+        .detail-value{ font-size: 1rem; color: var(--text); word-break: break-word; }
+        
+        .status-badge{
+            padding:4px 8px;border-radius:6px;font-weight:700;font-size:0.75rem;
+            display:inline-block;width: fit-content;transition:all var(--transition-speed);
+        }
+        .status-expired{background:#3a0d0d;color:var(--error);border:1px solid #7f1d1d}
+        .status-valid{background:#08352a;color:var(--success);border:1px solid #065f46}
+
+        .modal-footer{
+            padding: 20px; border-top: 1px solid var(--border); display: flex; gap: 12px;
+            justify-content: flex-end; background: linear-gradient(135deg,transparent,rgba(94,234,212,0.03)); 
+            border-radius: 0 0 12px 12px; flex-wrap: wrap; align-items: center;
+        }
+
+        /* Preview Frame */
+        .preview-frame-container {
+            display: none; /* Hidden by default */
+            flex: 1;
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-top: 20px;
+            position: relative;
+            animation:fadeIn 0.3s ease-out;
+        }
+        .preview-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #fff; /* Documents are usually on white */
+        }
+        .close-preview-btn {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: var(--muted);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            display: flex; align-items: center; gap: 6px;
+            transition:all var(--transition-speed);
+        }
+        .close-preview-btn:hover { color: var(--primary); transform:translateX(-4px); }
+
+        /* CAPTCHA STYLES */
+        .captcha-container {
+            width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 15px;
+            background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; border: 1px solid var(--border);
+            animation:slideDown 0.3s ease-out;
+        }
+        .captcha-controls { display: flex; gap: 10px; align-items: center; transition:all var(--transition-speed); }
+        .captcha-input { 
+            background: var(--bg); border: 1px solid var(--border); color: var(--text); 
+            padding: 10px; border-radius: 6px; width: 120px; text-align: center; 
+            letter-spacing: 3px; font-weight: bold; text-transform: uppercase;
+            transition:all var(--transition-speed);
+        }
+        .captcha-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(94,234,212,0.1)}
+
+        .no-results{
+            text-align:center;padding:40px;color:var(--muted);
+            animation:fadeIn 0.4s ease-out;
+        }
+        .no-results h3{ color:var(--text); margin-bottom:8px; }
+        
+        /* Skeleton Loading */
+        .skeleton-row {
+            height: 60px; background: linear-gradient(90deg,#1f2937,#2d3748,#1f2937); 
+            margin-bottom: 2px; position: relative; overflow: hidden;
+            animation:pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.7} }
+        
+        .skeleton-row::after {
+            content: ""; position: absolute; inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            transform: translateX(-100%); animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer { 100% { transform: translateX(100%); } }
+
+        /* Login Card */
+        .login-card{
+            background:var(--surface);padding:34px;border-radius:12px;box-shadow:var(--card-shadow);
+            border:1px solid var(--border);text-align:center;width:92%;max-width:420px;
+            animation: slideUp 0.4s ease-out;
+        }
+        @keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+        
+        .login-input{
+            width:100%;padding:12px;border-radius:10px;border:1px solid var(--border);
+            background:#0f1724;color:var(--text);margin-bottom:12px;transition:all var(--transition-speed);
+        }
+        .login-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(94,234,212,0.1)}
+        .login-input:hover{border-color:var(--primary)}
+        
+        .login-error{
+            display:none;background:#2b0b0b;padding:10px;border-radius:8px;
+            color:var(--error);margin-bottom:12px;animation:slideDown 0.3s ease-out;
+            border:1px solid #7f1d1d;
+        }
+        @keyframes slideDown { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+
+        /* Responsive Design */
+        .mobile-menu-btn { 
+            display: none; background: none; border: none; color: var(--text); 
+            font-size: 1.5rem; cursor: pointer; transition:all var(--transition-speed);
+            padding:8px;border-radius:6px;
+        }
+        .mobile-menu-btn:hover{ color:var(--primary); background:rgba(94,234,212,0.1); }
+        
+        @media (max-width:1000px){
+            .app-container{flex-direction:column}
+            .sidebar{width:100%; display: none;}
+            .sidebar.active{display: flex;}
+            .mobile-menu-btn { display: block; }
+            .detail-grid{ grid-template-columns: 1fr; }
+            
+            .captcha-container { flex-direction: column; gap: 12px; }
+            .captcha-controls { width: 100%; justify-content: space-between; }
+            
+            /* Mobile Card Table */
+            thead { display: none; }
+            tr { display: block; background: var(--surface); border: 1px solid var(--border); margin-bottom: 12px; border-radius: 8px; padding: 16px; }
+            td { display: flex; justify-content: space-between; padding: 8px 0; border: none; text-align: right; }
+            td::before { content: attr(data-label); font-weight: 700; color: var(--muted); text-align: left; margin-right: 12px; }
+            td:last-child { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); justify-content: center; }
+            .view-btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;"> <!-- Security: Disable Right Click Context Menu -->
+    
+    <!-- Login Screen -->
+    <div id="loginScreen" style="position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:50">
+        <div class="login-card">
+            <h2 style="display:flex;align-items:center;gap:10px;justify-content:center;color:var(--primary)"><i class="fas fa-shield-alt"></i> Secure Login</h2>
+            <p style="color:var(--muted);margin-top:6px;margin-bottom:16px">Enter the master password to access documents</p>
+            <form id="loginForm" onsubmit="return false;">
+                <input id="passwordInput" class="login-input" type="password" placeholder="Enter password" required autocomplete="off" />
+                
+                <div id="loginError" class="login-error"><i class="fas fa-times-circle"></i> Invalid password</div>
+                <div id="lockoutMsg" class="login-error" style="background:#3a1d1d;color:#f87171;display:none"><i class="fas fa-lock"></i> Too many attempts. Wait 30s.</div>
+                
+                <button id="loginBtn" class="btn" style="width:100%;"><i class="fas fa-sign-in-alt"></i> ACCESS DATA</button>
+            </form>
+            <p style="font-size:0.8rem;color:#4b5563;margin-top:12px">Hint: pearl</p>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div class="app-container" id="mainApp" style="display:none">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="logo-section">
+                <div class="logo">PP</div>
+                <div>
+                    <div style="font-weight:700">PRISTINE PEARL</div>
+                    <div style="color:var(--primary);font-weight:700">DOCUMENT MANAGER</div>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div class="section-title"><i class="fas fa-sliders-h"></i> FILTERS</div>
+                    <button onclick="resetFilters()" class="btn-danger-outline" style="font-size:0.7rem;border-radius:6px">CLEAR ALL</button>
+                </div>
+                
+                <form id="documentSearchForm" style="display:flex;flex-direction:column;gap:12px">
+                    <!-- ID is now explicitly set to prevent decode errors -->
+                    <input type="text" id="sheetId" value="13WO1-WQr98JL6PRzIcWDonZaWbAjQ5GNHELSZXKydWY" style="display:none" />
+
+                    <div>
+                        <label class="filter-label"><i class="fas fa-search"></i> Search</label>
+                        <input id="searchTerm" class="filter-input" placeholder="Search name, code..." />
+                    </div>
+
+                    <div>
+                        <label class="filter-label"><i class="fas fa-building"></i> Company</label>
+                        <select id="companyFilter" class="filter-input"><option value="">All Companies</option></select>
+                    </div>
+
+                    <div>
+                        <label class="filter-label"><i class="fas fa-sitemap"></i> Department</label>
+                        <select id="deptFilter" class="filter-input"><option value="">All Departments</option></select>
+                    </div>
+
+                    <div>
+                        <label class="filter-label"><i class="fas fa-file"></i> Document Type</label>
+                        <select id="docTypeFilter" class="filter-input"><option value="">All Types</option></select>
+                    </div>
+<div>
+    <label class="filter-label">
+        <i class="fas fa-hourglass-half"></i> Near Expiry
+    </label>
+    <select id="expiryFilter" class="filter-input">
+        <option value="">All</option>
+        <option value="30">&lt; 30 Days</option>
+        <option value="60">&lt; 60 Days</option>
+        <option value="90">&lt; 90 Days</option>
+        <option value="120">&lt; 120 Days</option>
+        <option value="180">&lt; 180 Days</option>
+        <option value="custom">Custom Days</option>
+    </select>
+</div>
+
+<div id="customDaysWrapper" style="display:none">
+    <input type="number" id="customDaysInput" 
+           class="filter-input selectable-text"
+           placeholder="Enter days"
+           min="1">
+</div>
+
+                    <button id="applyBtn" class="btn" type="button" style="width:100%"><i class="fas fa-filter"></i> APPLY FILTERS</button>
+                </form>
+
+
+                <button id="exportBtn" class="btn btn-secondary" style="display:none;width:100%;margin-top:12px"><i class="fas fa-file-csv"></i> EXPORT TO CSV</button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <!-- Main Content -->
+<div class="main-content">
+
+    <div class="header">
+        <div class="header-content">
+
+            <!-- LEFT SIDE -->
+            <div style="display:flex;align-items:center;gap:15px">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="page-title">Document Repository</div>
+            </div>
+
+            <!-- RIGHT SIDE -->
+            <div style="display:flex;align-items:center;gap:15px">
+
+                <div id="timerDisplay"
+                     style="font-size:0.8rem;color:var(--muted);font-variant-numeric:tabular-nums">
+                    <i class="fas fa-clock"></i> Auto-lock: 05:00
+                </div>
+
+                <div id="resultsCount"
+                     style="background:#0f1724;padding:8px 12px;border-radius:8px;
+                            border:1px solid var(--border);color:var(--primary);
+                            font-size:0.9rem">
+                    0 DOCS
+                </div>
+
+                <button onclick="logout()"
+                        style="
+                            background:#b91c1c;
+                            border:1px solid #ef4444;
+                            color:#fff;
+                            padding:8px 14px;
+                            border-radius:8px;
+                            font-weight:600;
+                            cursor:pointer;
+                            display:flex;
+                            align-items:center;
+                            gap:6px;
+                        "
+                        onmouseover="this.style.background='#ef4444'"
+                        onmouseout="this.style.background='#b91c1c'">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="results-section">
+        <div id="resultsContainer" class="results-container">
+            <!-- Your table loads here -->
+        </div>
+    </div>
+
+</div>
+
+    <!-- DETAIL MODAL -->
+    <div id="detailModal" class="modal-overlay">
+        <div id="modalContent" class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title"><i class="fas fa-file-alt"></i> Document Details</div>
+                <button class="close-btn" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Details injected here -->
+                <div id="detailsContent"></div>
+                
+                <!-- PREVIEW CONTAINER (Inside Modal) -->
+                <div id="previewContainer" class="preview-frame-container">
+                    <button class="close-preview-btn" onclick="hidePreview()">
+                        <i class="fas fa-arrow-left"></i> Back to Details
+                    </button>
+                    <iframe id="docFrame" class="preview-iframe" src=""></iframe>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <!-- CAPTCHA SECTION -->
+                <div id="captchaContainer" class="captcha-container" style="display:none">
+                    <div style="display:flex;flex-direction:column;gap:5px">
+                        <div style="display:flex;align-items:center;gap:10px">
+                            <canvas id="captchaCanvas" width="120" height="40" style="border-radius:6px;border:1px solid var(--border);cursor:pointer" onclick="drawCaptcha()" title="Click to refresh"></canvas>
+                            <button onclick="drawCaptcha()" class="btn-outline" style="padding:8px;border:none" title="Refresh Code"><i class="fas fa-sync-alt"></i></button>
+                        </div>
+                        <div id="captchaError" style="color:var(--error);font-size:0.75rem;display:none"><i class="fas fa-exclamation-circle"></i> Incorrect code</div>
+                    </div>
+                    <div class="captcha-controls">
+                        <input type="text" id="captchaInput" class="captcha-input" placeholder="CODE" maxlength="5">
+                        <button onclick="verifyCaptcha()" class="btn">VERIFY</button>
+                    </div>
+                </div>
+
+                <!-- ACTION BUTTONS (Hidden by default) -->
+                <div id="actionButtons" style="display:none;gap:12px;flex-wrap:wrap;justify-content:flex-end;width:100%">
+                    <button id="copyLinkBtn" class="btn btn-outline" onclick="copyLink()"><i class="fas fa-link"></i> COPY LINK</button>
+                    <button id="previewBtn" onclick="showPreview()" class="btn btn-outline"><i class="fas fa-eye"></i> PREVIEW</button>
+                    <a id="downloadBtn" href="#" download class="btn"><i class="fas fa-download"></i> DOWNLOAD</a>
+                </div>
+                
+                <!-- No URL Message -->
+                <div id="noUrlMessage" style="display:none;color:var(--muted);width:100%;text-align:center">
+                    <i class="fas fa-ban"></i> No digital file attached to this record.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* ---------- SECURITY CONFIGURATION ---------- */
+        // Obfuscated Configuration (Base64 Encoded)
+        // 'cGVhcmxAMTIz' decodes to 'pearl@123'
+        const SECURE_CONFIG = {
+            p_hash: "cGVhcmxAMTIz"
+        };
+
+        let loginAttempts = 0;
+        let isLockedOut = false;
+        const MAX_ATTEMPTS = 3;
+        const LOCKOUT_TIME = 30000; // 30 seconds
+        
+        /* ---------- AUTH & LOGIN LOGIC ---------- */
+        const loginScreen = document.getElementById('loginScreen');
+        const mainApp = document.getElementById('mainApp');
+        const passwordInput = document.getElementById('passwordInput');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginError = document.getElementById('loginError');
+        const lockoutMsg = document.getElementById('lockoutMsg');
+
+        loginBtn.addEventListener('click', performLogin);
+        passwordInput.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') performLogin(); });
+
+        function performLogin() {
+            if (isLockedOut) return;
+
+            const entered = passwordInput.value.trim();
+            const correct = atob(SECURE_CONFIG.p_hash); // Decode verify
+
+            if (entered === correct) {
+                // Success
+                loginAttempts = 0;
+                loginScreen.style.display = 'none';
+                mainApp.style.display = 'flex';
+                passwordInput.value = '';
+                startIdleTimer(); // Start auto-lock timer
+                fetchDocuments();
+            } else {
+                // Failure
+                loginAttempts++;
+                passwordInput.value = '';
+                
+                if (loginAttempts >= MAX_ATTEMPTS) {
+                    initiateLockout();
+                } else {
+                    loginError.innerHTML = `<i class="fas fa-times-circle"></i> Invalid password (${MAX_ATTEMPTS - loginAttempts} attempts remaining)`;
+                    loginError.style.display = 'block';
+                    setTimeout(()=> loginError.style.display='none', 3000);
+                }
+            }
+        }
+
+        function initiateLockout() {
+            isLockedOut = true;
+            loginBtn.disabled = true;
+            loginError.style.display = 'none';
+            lockoutMsg.style.display = 'block';
+            
+            let remaining = LOCKOUT_TIME / 1000;
+            lockoutMsg.innerHTML = `<i class="fas fa-lock"></i> Too many attempts. Wait ${remaining}s.`;
+
+            const interval = setInterval(() => {
+                remaining--;
+                lockoutMsg.innerHTML = `<i class="fas fa-lock"></i> Too many attempts. Wait ${remaining}s.`;
+                if (remaining <= 0) {
+                    clearInterval(interval);
+                    isLockedOut = false;
+                    loginAttempts = 0;
+                    loginBtn.disabled = false;
+                    lockoutMsg.style.display = 'none';
+                }
+            }, 1000);
+        }
+
+        function logout() {
+            stopIdleTimer();
+            mainApp.style.display = 'none';
+            loginScreen.style.display = 'flex';
+            passwordInput.value = '';
+            allDocuments = []; // Clear memory
+        }
+
+        /* ---------- IDLE TIMER (AUTO-LOGOUT) ---------- */
+        let idleTime = 0;
+        let idleInterval;
+        const IDLE_LIMIT = 300; // 5 minutes (300 seconds)
+
+        function startIdleTimer() {
+            stopIdleTimer();
+            idleTime = 0;
+            updateTimerDisplay();
+            idleInterval = setInterval(timerIncrement, 1000);
+            
+            // Reset on activity
+            window.addEventListener('mousemove', resetIdleTime);
+            window.addEventListener('keypress', resetIdleTime);
+            window.addEventListener('click', resetIdleTime);
+            window.addEventListener('scroll', resetIdleTime);
+        }
+
+        function stopIdleTimer() {
+            clearInterval(idleInterval);
+            window.removeEventListener('mousemove', resetIdleTime);
+            window.removeEventListener('keypress', resetIdleTime);
+        }
+
+        function resetIdleTime() {
+            idleTime = 0;
+            updateTimerDisplay();
+        }
+
+        function timerIncrement() {
+            idleTime++;
+            updateTimerDisplay();
+            if (idleTime >= IDLE_LIMIT) {
+                logout();
+                alert("Session expired due to inactivity.");
+            }
+        }
+
+        function updateTimerDisplay() {
+            const remaining = IDLE_LIMIT - idleTime;
+            const m = Math.floor(remaining / 60).toString().padStart(2, '0');
+            const s = (remaining % 60).toString().padStart(2, '0');
+            const display = document.getElementById('timerDisplay');
+            if (display) display.innerHTML = `<i class="fas fa-clock"></i> Auto-lock: ${m}:${s}`;
+        }
+
+        /* ---------- DATA & SORT STATE ---------- */
+        let allDocuments = [];
+        let currentSort = { key: 'company', dir: 'asc' };
+
+        async function fetchDocuments() {
+            const container = document.getElementById('resultsContainer');
+            const SHEET_ID = document.getElementById('sheetId').value.trim();
+            const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=Sheet1`;
+            
+            try {
+                // Show loading state
+                container.innerHTML = `<div class="no-results"><i class="fas fa-spinner fa-spin"></i> Loading documents...</div>`;
+                
+                const resp = await fetch(`${SHEET_URL}&t=${Date.now()}`);
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                const text = await resp.text();
+                
+                allDocuments = parseSheetData(text);
+                if (!allDocuments || allDocuments.length === 0) {
+                    container.innerHTML = `<div class="no-results"><i class="fas fa-inbox"></i> <h3>No documents found</h3><p>Try adjusting your filters or check back later.</p></div>`;
+                    return;
+                }
+                
+                updateStats(allDocuments.length);
+                populateFilters(allDocuments);
+                filterAndRender(allDocuments);
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `<div class="no-results" style="color:var(--error)"><i class="fas fa-exclamation-circle"></i> <h3>Failed to load documents</h3><p>Please check your internet connection and try again.</p></div>`;
+            }
+        }
+
+        function updateStats(n) { }
+
+        function parseSheetData(csvText) {
+            const lines = csvText.split(/\r\n|\n/).filter(l=>l.trim()!=='');
+            if (lines.length < 2) return [];
+
+            const docs = [];
+            for (let r=1;r<lines.length;r++){
+                const cells = splitCsvRow(lines[r]);
+                if (cells.length < 13) continue; 
+
+                const docDate = parseToDisplayDate(cells[7]);
+                const expiryDate = parseToDisplayDate(cells[8]);
+                
+                let isExpired = false;
+                if (expiryDate && expiryDate !== '-') {
+                    const parts = expiryDate.split('-'); 
+                    if (parts.length === 3) {
+                        const d = parseInt(parts[0]), m = parseInt(parts[1])-1, y = parseInt(parts[2]);
+                        const exp = new Date(y,m,d).setHours(0,0,0,0);
+                        if (!isNaN(exp)) isExpired = exp < new Date().setHours(0,0,0,0);
+                    }
+                }
+
+                docs.push({
+                    company: (cells[1]||'').trim(),
+                    department: (cells[2]||'').trim(),
+                    documentType: (cells[3]||'').trim(),
+                    documentNumber: (cells[4]||'').trim(),
+                    documentName: (cells[5]||'').trim(),
+                    documentCode: (cells[6]||'').trim(),
+                    docDate: docDate,
+                    expiryDate: expiryDate,
+                    remarks: (cells[9]||'').trim(),
+                    fileName: (cells[10]||'').trim(),
+                    fileSize: (cells[11]||'').trim(),
+                    url: (cells[12]||'').trim(),
+                    isExpired: isExpired
+                });
+            }
+            return docs;
+        }
+
+        /* ---------- SORTING LOGIC ---------- */
+        function handleSort(key) {
+            if (currentSort.key === key) {
+                currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.key = key;
+                currentSort.dir = 'asc';
+            }
+            filterAndRender(allDocuments);
+        }
+
+        function sortDocuments(docs) {
+            const { key, dir } = currentSort;
+            return docs.sort((a, b) => {
+                const valA = (a[key] || '').toLowerCase();
+                const valB = (b[key] || '').toLowerCase();
+                if (valA < valB) return dir === 'asc' ? -1 : 1;
+                if (valA > valB) return dir === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        function getSortIcon(key) {
+            if (currentSort.key !== key) return `<i class="fas fa-sort sort-icon"></i>`;
+            return currentSort.dir === 'asc' 
+                ? `<i class="fas fa-sort-up sort-icon sort-active"></i>` 
+                : `<i class="fas fa-sort-down sort-icon sort-active"></i>`;
+        }
+
+        /* ---------- RENDERING ---------- */
+        function renderDocuments(documents) {
+            const container = document.getElementById('resultsContainer');
+            const resultsCount = document.getElementById('resultsCount');
+            resultsCount.textContent = `${documents.length} doc${documents.length !== 1 ? 's' : ''}`;
+
+            if (!documents.length) {
+                container.innerHTML = `<div class="no-results"><i class="fas fa-search" style="font-size:2rem;margin-bottom:12px;opacity:0.5"></i><h3>No documents match your criteria</h3><p style="font-size:0.9rem;margin-top:8px">Try clearing some filters or adjusting your search</p></div>`;
+                return;
+            }
+
+            let html = `<div class="table-container"><table class="document-table">
+                <thead>
+                  <tr>
+                    <th onclick="handleSort('company')" style="width:25%">Company ${getSortIcon('company')}</th>
+                    <th onclick="handleSort('department')" style="width:25%">Department ${getSortIcon('department')}</th>
+                    <th onclick="handleSort('documentType')" style="width:20%">Document Type ${getSortIcon('documentType')}</th> </th>
+                    <th onclick="handleSort('documentName')" style="width:35%">Document Name ${getSortIcon('documentName')}</th>
+                    <th style="width:15%;text-align:center">Action</th>
+                  </tr>
+                </thead>
+                <tbody>`;
+
+            documents.forEach((d, index) => {
+                const rowId = `doc_${index}_${Math.random().toString(36).substr(2,9)}`;
+                window[rowId] = d;
+
+                html += `<tr>`;
+                html += `<td data-label="Company" class="selectable-text"><strong>${escapeHtml(d.company)}</strong></td>`;
+                html += `<td data-label="Department" class="selectable-text">${escapeHtml(d.department)}</td>`;
+                html += `<td data-label="Document Type">${escapeHtml(d.documentType)}</td>`;
+                html += `<td data-label="Document Name" class="selectable-text">${escapeHtml(d.documentName)}</td>`;
+                html += `<td data-label="Action" style="text-align:center">
+                            <button class="view-btn" onclick="openDetailModal('${rowId}')" title="View document details">
+                                <i class="fas fa-info-circle"></i> View Details
+                            </button>
+                         </td>`;
+                html += `</tr>`;
+            });
+
+            html += `</tbody></table></div>`;
+            container.innerHTML = html;
+        }
+
+        /* ---------- CAPTCHA LOGIC ---------- */
+        let currentCaptcha = '';
+
+        function generateCaptchaCode() {
+            const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ'; 
+            let result = '';
+            for (let i = 0; i < 5; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        function drawCaptcha() {
+            currentCaptcha = generateCaptchaCode();
+            const canvas = document.getElementById('captchaCanvas');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+
+            ctx.clearRect(0, 0, w, h);
+            ctx.fillStyle = '#1f2937';
+            ctx.fillRect(0, 0, w, h);
+
+            for(let i=0; i<40; i++) {
+                ctx.fillStyle = Math.random() > 0.5 ? '#374151' : '#111827';
+                ctx.beginPath();
+                ctx.arc(Math.random()*w, Math.random()*h, 1.5, 0, 2*Math.PI);
+                ctx.fill();
+            }
+
+            ctx.font = 'bold 22px Inter, sans-serif';
+            ctx.fillStyle = '#5eead4';
+            ctx.textBaseline = 'middle';
+            ctx.textAlign = 'center';
+            
+            ctx.save();
+            ctx.translate(w/2, h/2);
+            ctx.rotate((Math.random() - 0.5) * 0.15);
+            ctx.fillText(currentCaptcha, 0, 1);
+            ctx.restore();
+            
+            document.getElementById('captchaInput').value = '';
+            document.getElementById('captchaError').style.display = 'none';
+        }
+
+        function verifyCaptcha() {
+            const input = document.getElementById('captchaInput');
+            const errorMsg = document.getElementById('captchaError');
+            const entered = input.value.toUpperCase().trim();
+
+            if (entered === currentCaptcha) {
+                document.getElementById('captchaContainer').style.display = 'none';
+                document.getElementById('actionButtons').style.display = 'flex';
+            } else {
+                errorMsg.style.display = 'block';
+                drawCaptcha(); 
+            }
+        }
+
+        document.getElementById('captchaInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') verifyCaptcha();
+        });
+
+        /* ---------- MODAL LOGIC & PREVIEW ---------- */
+        let currentDetailUrl = ""; 
+
+        function openDetailModal(rowId) {
+            resetIdleTime(); 
+            const d = window[rowId];
+            if (!d) return;
+
+            currentDetailUrl = d.url;
+            
+            // UI Elements
+            const modal = document.getElementById('detailModal');
+            const modalContent = document.getElementById('modalContent');
+            const detailsContent = document.getElementById('detailsContent');
+            const previewContainer = document.getElementById('previewContainer');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const captchaContainer = document.getElementById('captchaContainer');
+            const actionButtons = document.getElementById('actionButtons');
+            const noUrlMessage = document.getElementById('noUrlMessage');
+
+            // Reset State
+            modalContent.classList.remove('expanded');
+            previewContainer.style.display = 'none';
+            detailsContent.style.display = 'block';
+            document.getElementById('docFrame').src = ""; // clear prev
+
+            actionButtons.style.display = 'none';
+            captchaContainer.style.display = 'none';
+            noUrlMessage.style.display = 'none';
+            
+            const statusBadge = d.isExpired 
+                ? `<span class="status-badge status-expired">EXPIRED</span>` 
+                : `<span class="status-badge status-valid">VALID</span>`;
+            
+            const expiryDisplay = d.expiryDate === '-' ? '-' : `${d.expiryDate} &nbsp; ${statusBadge}`;
+
+            // Inject Details
+            detailsContent.innerHTML = `
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">Company</div>
+                        <div class="detail-value selectable-text" style="color:var(--primary);font-weight:600">${escapeHtml(d.company)}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Document Name</div>
+                        <div class="detail-value selectable-text" style="font-weight:600">${escapeHtml(d.documentName)}</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">Department</div>
+                        <div class="detail-value selectable-text">${escapeHtml(d.department)}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Document Type</div>
+                        <div class="detail-value selectable-text">${escapeHtml(d.documentType)}</div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-label">Document Number</div>
+                        <div class="detail-value selectable-text">${escapeHtml(d.documentNumber)}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Document Code</div>
+                        <div class="detail-value selectable-text"><code>${escapeHtml(d.documentCode)}</code></div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-label">Document Date</div>
+                        <div class="detail-value selectable-text">${escapeHtml(d.docDate)}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Expiry Date</div>
+                        <div class="detail-value selectable-text">${expiryDisplay}</div>
+                    </div>
+
+                    <div class="detail-item" style="grid-column: 1 / -1;">
+                        <div class="detail-label">Remarks</div>
+                        <div class="detail-value selectable-text">${escapeHtml(d.remarks) || '-'}</div>
+                    </div>
+
+                    <div class="detail-item">
+                        <div class="detail-label">File Name</div>
+                        <div class="detail-value selectable-text">${escapeHtml(d.fileName)}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">File Size</div>
+                        <div class="detail-value selectable-text">${escapeHtml(d.fileSize)}</div>
+                    </div>
+                </div>
+            `;
+
+            if (d.url && d.url !== '-') {
+                captchaContainer.style.display = 'flex';
+                drawCaptcha();
+                downloadBtn.href = d.url;
+            } else {
+                noUrlMessage.style.display = 'block';
+            }
+
+            modal.style.display = 'flex';
+        }
+
+        function showPreview() {
+            if (!currentDetailUrl) return;
+
+            const modalContent = document.getElementById('modalContent');
+            const detailsContent = document.getElementById('detailsContent');
+            const previewContainer = document.getElementById('previewContainer');
+            const frame = document.getElementById('docFrame');
+
+            // Expand Modal
+            modalContent.classList.add('expanded');
+            detailsContent.style.display = 'none'; // hide details to make room
+            previewContainer.style.display = 'block';
+
+            // Smart URL handling for Google Drive
+            let previewUrl = currentDetailUrl;
+            if (previewUrl.includes('drive.google.com') && previewUrl.includes('/view')) {
+                previewUrl = previewUrl.replace('/view', '/preview');
+            }
+
+            frame.src = previewUrl;
+        }
+
+        function hidePreview() {
+            const modalContent = document.getElementById('modalContent');
+            const detailsContent = document.getElementById('detailsContent');
+            const previewContainer = document.getElementById('previewContainer');
+            const frame = document.getElementById('docFrame');
+
+            // Shrink Modal
+            modalContent.classList.remove('expanded');
+            previewContainer.style.display = 'none';
+            detailsContent.style.display = 'block';
+            frame.src = "";
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').style.display = 'none';
+        }
+
+        function copyLink() {
+            if (!currentDetailUrl) return;
+            const textArea = document.createElement("textarea");
+            textArea.value = currentDetailUrl;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                const btn = document.getElementById('copyLinkBtn');
+                const originalHtml = `<i class="fas fa-link"></i> COPY LINK`;
+                btn.innerHTML = `<i class="fas fa-check"></i> COPIED`;
+                setTimeout(() => btn.innerHTML = originalHtml, 2000);
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+            }
+            document.body.removeChild(textArea);
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('detailModal');
+            const modalContent = modal.querySelector('.modal-content');
+            // Only close if clicking on overlay background, not the content
+            if (event.target === modal) closeModal();
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('detailModal');
+                if (modal && modal.style.display === 'flex') closeModal();
+            }
+        });
+
+        /* ---------- UTILS & HELPERS ---------- */
+        function filterAndRender(documents) {
+            resetIdleTime(); // filtering counts as activity
+            const search = (document.getElementById('searchTerm').value || '').trim().toLowerCase();
+            const company = (document.getElementById('companyFilter').value || '').trim();
+            const dept = (document.getElementById('deptFilter').value || '').trim();
+            const docType = (document.getElementById('docTypeFilter').value || '').trim();
+
+           let filtered = documents.filter(d => {
+
+    if (company && d.company !== company) return false;
+    if (dept && d.department !== dept) return false;
+    if (docType && d.documentType !== docType) return false;
+
+    if (search) {
+        const hay = `${d.company} ${d.department} ${d.documentType} ${d.documentName} ${d.documentNumber} ${d.documentCode}`.toLowerCase();
+        if (!hay.includes(search)) return false;
+    }
+
+    // 🔥 NEAR EXPIRY FILTER
+    const expiryFilter = document.getElementById('expiryFilter').value;
+    const customDays = parseInt(document.getElementById('customDaysInput').value);
+
+    if (expiryFilter) {
+        if (!d.expiryDate || d.expiryDate === '-') return false;
+
+        const parts = d.expiryDate.split('-');
+        if (parts.length !== 3) return false;
+
+        const expDate = new Date(parts[2], parts[1] - 1, parts[0]);
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        const diffTime = expDate - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        let limit = 0;
+
+        if (expiryFilter === 'custom') {
+            if (!customDays || customDays <= 0) return false;
+            limit = customDays;
+        } else {
+            limit = parseInt(expiryFilter);
+        }
+
+        if (diffDays < 0 || diffDays > limit) return false;
+    }
+
+    return true;
+});
+
+            filtered = sortDocuments(filtered);
+            renderDocuments(filtered);
+            
+            const exportBtn = document.getElementById('exportBtn');
+            exportBtn.style.display = filtered.length ? 'block' : 'none';
+            exportBtn.onclick = () => exportToCSV(filtered);
+        }
+
+        function exportToCSV(documents) {
+            resetIdleTime();
+            const headers = [
+                "COMPANY", "DEPARTMENT", "DOCUMENT TYPE", "DOCUMENT NUMBER",
+                "DOCUMENT NAME", "DOCUMENT CODE", "DOC DATE", "EXPIRY DATE",
+                "REMARKS", "FILE NAME", "FILE SIZE (MB)", "URL"
+            ];
+            
+            let csv = headers.join(',') + '\n';
+            documents.forEach(d => {
+                const row = [
+                    csvEscape(d.company), csvEscape(d.department), csvEscape(d.documentType),
+                    csvEscape(d.documentNumber), csvEscape(d.documentName), csvEscape(d.documentCode),
+                    csvEscape(d.docDate), csvEscape(d.expiryDate), csvEscape(d.remarks),
+                    csvEscape(d.fileName), csvEscape(d.fileSize), csvEscape(d.url)
+                ];
+                csv += row.join(',') + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `document_report_${new Date().toISOString().slice(0,10)}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function resetFilters() {
+            document.getElementById('searchTerm').value = '';
+            document.getElementById('companyFilter').value = '';
+            document.getElementById('deptFilter').value = '';
+            document.getElementById('docTypeFilter').value = '';
+document.getElementById('expiryFilter').value = '';
+    document.getElementById('customDaysInput').value = '';
+    document.getElementById('customDaysWrapper').style.display = 'none';
+            filterAndRender(allDocuments);
+        }
+
+        function populateFilters(documents) {
+            const createOpts = (id, key) => {
+                const sel = document.getElementById(id);
+                const current = sel.value;
+                sel.innerHTML = sel.options[0].outerHTML;
+                const unique = [...new Set(documents.map(d => d[key]).filter(Boolean))].sort();
+                unique.forEach(v => {
+                    const opt = document.createElement('option');
+                    opt.value = v; opt.textContent = v;
+                    sel.appendChild(opt);
+                });
+                sel.value = current;
+            };
+            createOpts('companyFilter', 'company');
+            createOpts('deptFilter', 'department');
+            createOpts('docTypeFilter', 'documentType');
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        function splitCsvRow(row) {
+            const cells = [];
+            let inQuotes = false, cur = '';
+            for (let i=0;i<row.length;i++){
+                const ch = row[i];
+                if (ch === '"') {
+                    if (inQuotes && row[i+1] === '"') { cur += '"'; i++; }
+                    else { inQuotes = !inQuotes; }
+                } else if (ch === ',' && !inQuotes) {
+                    cells.push(cur); cur = '';
+                } else { cur += ch; }
+            }
+            cells.push(cur);
+            return cells.map(c => c.replace(/^"|"$/g,'').trim());
+        }
+
+        function parseToDisplayDate(v) {
+            if (!v || v === 'N/A' || v === '-') return '-';
+            v = v.replace(/\//g,'-');
+            if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(v)) {
+                const [y,m,d] = v.split('-'); return `${d.padStart(2,'0')}-${m.padStart(2,'0')}-${y}`;
+            }
+            if (/^\d{1,2}-\d{1,2}-\d{4}$/.test(v)) {
+                const [d,m,y] = v.split('-'); return `${d.padStart(2,'0')}-${m.padStart(2,'0')}-${y}`;
+            }
+            return v;
+        }
+
+        function escapeHtml(str) { return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+        function csvEscape(v) {
+            if (v === null || v === undefined) return '""';
+            const s = String(v);
+            if (s.includes(',') || s.includes('"') || s.includes('\n')) return `"${s.replace(/"/g,'""')}"`;
+            return `"${s}"`;
+        }
+
+        document.getElementById('applyBtn').addEventListener('click', () => filterAndRender(allDocuments));
+        
+        // Debounced search for better performance
+        let searchTimeout;
+        document.getElementById('searchTerm').addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => filterAndRender(allDocuments), 300);
+        });
+        
+        ['companyFilter', 'deptFilter', 'docTypeFilter', 'expiryFilter'].forEach(id => {
+            document.getElementById(id).addEventListener('change', () => filterAndRender(allDocuments));
+        });
+
+document.getElementById('expiryFilter').addEventListener('change', function () {
+    const wrapper = document.getElementById('customDaysWrapper');
+    wrapper.style.display = this.value === 'custom' ? 'block' : 'none';
+    filterAndRender(allDocuments);
+});
+
+document.getElementById('customDaysInput').addEventListener('input', function () {
+    filterAndRender(allDocuments);
+});
+
+    </script>
+</body>
+</html>
